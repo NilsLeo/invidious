@@ -102,5 +102,12 @@ def get_subscription_feed(user, max_results = 40, page = 1)
     videos = videos - notifications
   end
 
+  if user.preferences.hide_shorts
+    max_len = CONFIG.hide_shorts_max_length
+    is_short = ->(v : ChannelVideo) { v.length_seconds > 0 && v.length_seconds <= max_len && !v.live_now && v.premiere_timestamp.nil? }
+    videos.reject! { |v| is_short.call(v) }
+    notifications.reject! { |v| is_short.call(v) }
+  end
+
   return videos, notifications
 end

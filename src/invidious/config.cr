@@ -46,6 +46,7 @@ struct ConfigPreferences
   property speed : Float32 = 1.0_f32
   property thin_mode : Bool = false
   property unseen_only : Bool = false
+  property hide_shorts : Bool = false
   property video_loop : Bool = false
   property extend_desc : Bool = false
   property volume : Int32 = 100
@@ -92,6 +93,10 @@ class Config
 
   # Number of threads to use for crawling videos from channels (for updating subscriptions)
   property channel_threads : Int32 = 1
+  # Maximum length (in seconds) a video may have to be treated as a YouTube Short
+  # when the per-user "hide_shorts" preference is enabled. Configurable via the
+  # INVIDIOUS_HIDE_SHORTS_MAX_LENGTH env var or `hide_shorts_max_length` in config.
+  property hide_shorts_max_length : Int32 = 60
   # Time interval between two executions of the job that crawls channel videos (subscriptions update).
   @[YAML::Field(converter: Preferences::TimeSpanConverter)]
   property channel_refresh_interval : Time::Span = 30.minutes

@@ -139,6 +139,10 @@ module Invidious::Routes::PreferencesRoute
     unseen_only ||= "off"
     unseen_only = unseen_only == "on"
 
+    hide_shorts = env.params.body["hide_shorts"]?.try &.as(String)
+    hide_shorts ||= "off"
+    hide_shorts = hide_shorts == "on"
+
     notifications_only = env.params.body["notifications_only"]?.try &.as(String)
     notifications_only ||= "off"
     notifications_only = notifications_only == "on"
@@ -179,6 +183,7 @@ module Invidious::Routes::PreferencesRoute
       speed:                       speed,
       thin_mode:                   thin_mode,
       unseen_only:                 unseen_only,
+      hide_shorts:                 hide_shorts,
       video_loop:                  video_loop,
       volume:                      volume,
       extend_desc:                 extend_desc,

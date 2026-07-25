@@ -193,7 +193,17 @@ Invidious::Jobs.register Invidious::Jobs::InstanceListRefreshJob.new
 Invidious::Jobs.start_all
 
 def popular_videos
-  Invidious::Jobs::PullPopularVideosJob::POPULAR_VIDEOS.get
+  videos = Invidious::Jobs::PullPopularVideosJob::POPULAR_VIDEOS.get
+
+  # Drop likely YouTube Shorts (non-live, non-premiere videos at or below the
+  # configured length) from the popular feed. Applies instance-wide since the
+  # popular feed is served to anonymous clients that carry no user preference.
+  max_len = CONFIG.hide_shorts_max_length
+  if max_len > 0
+    videos = videos.reject { |v| v.length_seconds > 0 && v.length_seconds <= max_len && !v.live_now && v.premiere_timestamp.nil? }
+  end
+
+  videos
 end
 
 # Routing

@@ -27,6 +27,17 @@ struct SearchVideo
   property author_thumbnail : String?
   property badges : VideoBadges
 
+  # Whether this video looks like a YouTube Short: a regular (non-live,
+  # non-premiere) video whose length is at or below `max_len` seconds.
+  # `max_len <= 0` disables the check.
+  def short?(max_len : Int32) : Bool
+    return false if max_len <= 0
+    return false if @length_seconds <= 0 || @length_seconds > max_len
+    return false unless @premiere_timestamp.nil?
+    return false if @badges.includes?(VideoBadges::LiveNow)
+    true
+  end
+
   def to_xml(auto_generated, query_params, xml : XML::Builder)
     query_params["v"] = self.id
 

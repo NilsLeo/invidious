@@ -1210,7 +1210,11 @@ def extract_items(
 
     case parsed
     when .is_a?(Continuation) then continuation = parsed.token
-    when .is_a?(SearchItem)   then items << parsed
+    when .is_a?(SearchItem)
+      # Drop likely YouTube Shorts everywhere item lists are parsed from YouTube
+      # (trending, search, channel listings, playlists, channel refresh, ...).
+      next if parsed.is_a?(SearchVideo) && parsed.short?(CONFIG.hide_shorts_max_length)
+      items << parsed
     end
   end
 
