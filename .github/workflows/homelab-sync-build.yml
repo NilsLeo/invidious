@@ -42,8 +42,16 @@ jobs:
           # Fails loudly (and notifies) if the patch ever conflicts with upstream.
           git rebase upstream/master
 
-      - name: Push rebased patch branch
-        run: git push --force-with-lease origin homelab-hide-shorts
+      - name: Push rebased patch branch (best-effort)
+        # The built-in GITHUB_TOKEN cannot push changes to .github/workflows/**
+        # files. When upstream updates a workflow file, the rebased force-push
+        # includes that change and GitHub rejects it. That's fine: the image is
+        # built from the local rebased tree below regardless, so a rejected
+        # branch push must not fail the run. (Use a PAT with `workflow` scope
+        # here if you ever need the remote branch kept fully rebased.)
+        run: |
+          git push --force-with-lease origin homelab-hide-shorts \
+            || echo "::warning::branch push skipped (workflow-file perms); image still builds from rebased tree"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
