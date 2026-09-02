@@ -1,12 +1,14 @@
 name: Invidious CI
 
 on:
+  workflow_dispatch: {}
   schedule:
     - cron: "0 0 * * *" # Every day at 00:00
   push:
     branches:
       - "master"
       - "api-only"
+      - "homelab-hide-shorts"
   pull_request:
     branches: "*"
     paths-ignore:
